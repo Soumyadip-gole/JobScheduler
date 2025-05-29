@@ -1,0 +1,223 @@
+openapi: 3.0.0
+info:
+  title: jobscheduler api
+  contact: {}
+  version: '1.0'
+servers:
+  - url: https://jobsmanager-api-559c7bc8b54b.herokuapp.com/api/
+    variables: {}
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      operationId: Register
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/RegisterRequest'
+                - example:
+                    name: tomy
+                    password: tomy11
+                    email: tomy11@gmail.com
+            example:
+              name: tomy
+              password: tomy11
+              email: tomy11@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      operationId: login
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/loginrequest'
+                - example:
+                    password: tomy11
+                    email: tomy11@gmail.com
+            example:
+              password: tomy11
+              email: tomy11@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /jobs/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The user ID
+    delete:
+      tags:
+        - Jobs
+      summary: Delete Job
+      operationId: DeleteJob
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+        - bearer: []
+    get:
+      tags:
+        - Jobs
+      summary: Get Single Job
+      operationId: GetSingleJob
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+        - bearer: []
+    patch:
+      tags:
+        - Jobs
+      summary: Update Job
+      operationId: UpdateJob
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+        - bearer: []
+  /jobs:
+    post:
+      tags:
+        - Jobs
+      summary: Create Job
+      operationId: CreateJob
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CreateJobRequest'
+                - example:
+                    company: wipro
+                    position: ceo
+            example:
+              company: wipro
+              position: ceo
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+        - bearer: []
+    get:
+      tags:
+        - Jobs
+      summary: Get All Jobs
+      operationId: GetAllJobs
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+        - bearer: []
+components:
+  schemas:
+    RegisterRequest:
+      title: RegisterRequest
+      required:
+        - name
+        - password
+        - email
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+      example:
+        name: tomy
+        password: tomy11
+        email: tomy11@gmail.com
+    loginrequest:
+      title: LoginRequest
+      required:
+        - password
+        - email
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+      example:
+        password: tomy11
+        email: tomy11@gmail.com
+    DeleteJobRequest:
+      title: DeleteJobRequest
+      required:
+        - position
+      type: object
+      properties:
+        position:
+          type: string
+      example:
+        position: cto
+    CreateJobRequest:
+      title: CreateJobRequest
+      required:
+        - company
+        - position
+      type: object
+      properties:
+        company:
+          type: string
+        position:
+          type: string
+      example:
+        company: wipro
+        position: ceo
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+security: []
+tags:
+  - name: Misc
+    description: ''
+  - name: Auth
+    description: ''
+  - name: Jobs
+    description: ''
