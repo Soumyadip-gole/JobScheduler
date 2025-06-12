@@ -26,7 +26,7 @@ const yaml = require('yamljs');
  app.set('trust proxy', 1);
  app.use(express.json());
  app.use(helmet());
- app.use(cors());
+ app.use(cors())
 app.use(xss);
  app.use(ratelimit({
   windowMs: 900000,

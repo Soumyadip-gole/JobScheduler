@@ -1,68 +1,91 @@
 openapi: 3.0.0
 info:
-  title: jobscheduler api
-  contact: {}
-  version: '1.0'
+  title: Jobs API
+  description: RESTful API for managing job postings and user authentication.
+  version: '1.0.0'
 servers:
-  - url: https://jobsmanager-api-559c7bc8b54b.herokuapp.com/api/
-    variables: {}
+  - url: https://jobscheduler-f996.onrender.com/
+    description: Production server
+  - url: http://localhost:5000/
+    description: Local development server
 paths:
   /auth/register:
     post:
       tags:
         - Auth
-      summary: Register
-      operationId: Register
-      parameters: []
+      summary: Register a new user
+      description: Create a new user account.
       requestBody:
-        description: ''
+        required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/RegisterRequest'
-                - example:
-                    name: tomy
-                    password: tomy11
-                    email: tomy11@gmail.com
+              $ref: '#/components/schemas/RegisterRequest'
             example:
               name: tomy
               password: tomy11
               email: tomy11@gmail.com
-        required: true
       responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
-      security: []
+        '201':
+          description: User registered successfully
+        '400':
+          description: Invalid input or user already exists
   /auth/login:
     post:
       tags:
         - Auth
       summary: Login
-      operationId: login
-      parameters: []
+      description: Authenticate user and return a JWT token.
       requestBody:
-        description: ''
+        required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/loginrequest'
-                - example:
-                    password: tomy11
-                    email: tomy11@gmail.com
+              $ref: '#/components/schemas/LoginRequest'
             example:
-              password: tomy11
               email: tomy11@gmail.com
-        required: true
+              password: tomy11
       responses:
         '200':
-          description: ''
-          headers: {}
-      deprecated: false
-      security: []
+          description: Login successful, returns JWT token
+        '401':
+          description: Invalid credentials
+  /jobs:
+    get:
+      tags:
+        - Jobs
+      summary: Get all jobs
+      description: Retrieve all jobs for the authenticated user.
+      security:
+        - bearer: []
+      responses:
+        '200':
+          description: List of jobs
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Jobs
+      summary: Create a job
+      description: Create a new job posting.
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+            example:
+              company: wipro
+              position: ceo
+      responses:
+        '201':
+          description: Job created successfully
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
   /jobs/{id}:
     parameters:
       - in: path
@@ -70,154 +93,124 @@ paths:
         schema:
           type: string
         required: true
-        description: The user ID
-    delete:
-      tags:
-        - Jobs
-      summary: Delete Job
-      operationId: DeleteJob
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
-      security:
-        - bearer: []
+        description: The job ID
     get:
       tags:
         - Jobs
-      summary: Get Single Job
-      operationId: GetSingleJob
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
+      summary: Get a single job
+      description: Retrieve a job by its ID.
       security:
         - bearer: []
+      responses:
+        '200':
+          description: Job details
+        '404':
+          description: Job not found
+        '401':
+          description: Unauthorized
     patch:
       tags:
         - Jobs
-      summary: Update Job
-      operationId: UpdateJob
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
+      summary: Update a job
+      description: Update an existing job posting.
       security:
         - bearer: []
-  /jobs:
-    post:
-      tags:
-        - Jobs
-      summary: Create Job
-      operationId: CreateJob
-      parameters: []
       requestBody:
-        description: ''
+        required: true
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: '#/components/schemas/CreateJobRequest'
-                - example:
-                    company: wipro
-                    position: ceo
+              $ref: '#/components/schemas/UpdateJobRequest'
             example:
               company: wipro
-              position: ceo
-        required: true
+              position: cto
+              status: interview
       responses:
         '200':
-          description: ''
-          headers: {}
-      deprecated: false
-      security:
-        - bearer: []
-    get:
+          description: Job updated successfully
+        '400':
+          description: Invalid input
+        '404':
+          description: Job not found
+        '401':
+          description: Unauthorized
+    delete:
       tags:
         - Jobs
-      summary: Get All Jobs
-      operationId: GetAllJobs
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          headers: {}
-      deprecated: false
+      summary: Delete a job
+      description: Delete a job by its ID.
       security:
         - bearer: []
+      responses:
+        '200':
+          description: Job deleted successfully
+        '404':
+          description: Job not found
+        '401':
+          description: Unauthorized
 components:
   schemas:
     RegisterRequest:
-      title: RegisterRequest
+      type: object
       required:
         - name
         - password
         - email
-      type: object
       properties:
         name:
           type: string
+          example: tomy
         password:
           type: string
+          example: tomy11
         email:
           type: string
-      example:
-        name: tomy
-        password: tomy11
-        email: tomy11@gmail.com
-    loginrequest:
-      title: LoginRequest
+          format: email
+          example: tomy11@gmail.com
+    LoginRequest:
+      type: object
       required:
         - password
         - email
-      type: object
       properties:
         password:
           type: string
+          example: tomy11
         email:
           type: string
-      example:
-        password: tomy11
-        email: tomy11@gmail.com
-    DeleteJobRequest:
-      title: DeleteJobRequest
-      required:
-        - position
-      type: object
-      properties:
-        position:
-          type: string
-      example:
-        position: cto
+          format: email
+          example: tomy11@gmail.com
     CreateJobRequest:
-      title: CreateJobRequest
+      type: object
       required:
         - company
         - position
+      properties:
+        company:
+          type: string
+          example: wipro
+        position:
+          type: string
+          example: ceo
+    UpdateJobRequest:
       type: object
       properties:
         company:
           type: string
+          example: wipro
         position:
           type: string
-      example:
-        company: wipro
-        position: ceo
+          example: cto
+        status:
+          type: string
+          example: interview
   securitySchemes:
     bearer:
       type: http
       scheme: bearer
-security: []
+      bearerFormat: JWT
 tags:
-  - name: Misc
-    description: ''
   - name: Auth
-    description: ''
+    description: User authentication
   - name: Jobs
-    description: ''
+    description: Job management

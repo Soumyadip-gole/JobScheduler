@@ -1,69 +1,75 @@
-#### Setup
+# Jobs API
 
-```bash
-npm install && npm start
-```
+A RESTful API for managing job postings and user authentication, built with Node.js, Express, and MongoDB.
 
-#### Database Connection
+## Features
+- User registration and login with JWT authentication
+- CRUD operations for job postings (create, read, update, delete)
+- Secure password hashing with bcryptjs
+- Input validation and error handling
+- API documentation with Swagger UI
+- Security best practices: helmet, cors, xss-clean, express-rate-limit
 
-1. Import connect.js
-2. Invoke in start()
-3. Setup .env in the root
-4. Add MONGO_URI with correct value
+## Setup
 
-#### Routers
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env` file in the root directory with the following variables:
+   ```env
+   MONGO_URI=your_mongodb_connection_string
+   secret=your_jwt_secret
+   expire=1d
+   PORT=5000
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
-- auth.js
-- jobs.js
+## API Documentation
 
-#### User Model
+- Visit [https://jobscheduler-f996.onrender.com/](https://jobscheduler-f996.onrender.com/api-docs) for Swagger UI and detailed API docs.
+- Local: [http://localhost:5000/](http://localhost:5000/api-docs)
 
-Email Validation Regex
+## Endpoints
 
-```regex
-/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-```
+### Auth
+- `POST /api/auth/register` — Register a new user
+- `POST /api/auth/login` — Login and receive a JWT
 
-#### Register User
+### Jobs (Protected)
+- `GET /api/jobs` — List all jobs for the authenticated user
+- `POST /api/jobs` — Create a new job
+- `GET /api/jobs/:id` — Get a single job by ID
+- `PATCH /api/jobs/:id` — Update a job
+- `DELETE /api/jobs/:id` — Delete a job
 
-- Validate - name, email, password - with Mongoose
-- Hash Password (with bcryptjs)
-- Save User
-- Generate Token
-- Send Response with Token
+## Models
 
-#### Login User
+### User
+- `name`: String, required, 3-30 chars
+- `email`: String, required, unique, valid email
+- `password`: String, required, min 6 chars (hashed)
 
-- Validate - email, password - in controller
-- If email or password is missing, throw BadRequestError
-- Find User
-- Compare Passwords
-- If no user or password does not match, throw UnauthenticatedError
-- If correct, generate Token
-- Send Response with Token
+### Job
+- `company`: String, required
+- `position`: String, required
+- `status`: String, default 'pending'
+- `user`: ObjectId (User), required
 
-#### Mongoose Errors
+## Security
+- Helmet for HTTP headers
+- CORS enabled
+- XSS protection
+- Rate limiting
 
-- Validation Errors
-- Duplicate (Email)
-- Cast Error
+## Error Handling
+- Handles validation, duplicate, and cast errors
 
-#### Security
+---
 
-- helmet
-- cors
-- xss-clean
-- express-rate-limit
+**Made with Node.js, Express, and MongoDB.**
 
-Swagger UI
-
-```yaml
-/jobs/{id}:
-  parameters:
-    - in: path
-      name: id
-      schema:
-        type: string
-      required: true
-      description: the job id
-```
+**Live Demo:** [https://jobscheduler-f996.onrender.com/](https://jobscheduler-f996.onrender.com/)
